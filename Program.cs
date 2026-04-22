@@ -1,25 +1,25 @@
 using AmazonClone.Api.Data;
-using Microsoft.EntityFrameworkCore;
+using AmazonClone.Api.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
+// Add services (DbContext, Controllers, JWT, Swagger) ...
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.WriteIndented = true; // optional
+        options.JsonSerializerOptions.WriteIndented = true;
     });
 
-// Add JWT Authentication
+// JWT authentication setup ...
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -37,11 +37,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add Swagger and JWT support
+// Swagger setup ...
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AmazonClone API", Version = "v1" });
-
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
@@ -50,7 +49,6 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -65,7 +63,28 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Use authentication & authorization
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    // Check if admin exists
+    var adminEmail = "admin@amazonclone.com";
+    if (!db.Users.Any(u => u.Email == adminEmail))
+    {
+        var adminUser = new User
+        {
+            Email = adminEmail,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+            Role = "Admin"
+        };
+
+        db.Users.Add(adminUser);
+        db.SaveChanges();
+        Console.WriteLine("Admin user created automatically.");
+    }
+}
+
+// Middleware
 app.UseAuthentication();
 app.UseAuthorization();
 

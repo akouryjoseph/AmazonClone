@@ -36,6 +36,7 @@ namespace AmazonClone.Api.Controllers
 
             var cart = await _context.Carts
                 .Include(c => c.Items)
+                    .ThenInclude(i => i.Product)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
 
             if (cart == null || !cart.Items.Any())
@@ -47,9 +48,11 @@ namespace AmazonClone.Api.Controllers
                 Items = cart.Items.Select(i => new OrderItem
                 {
                     ProductId = i.ProductId,
-                    Quantity = i.Quantity
+                    Quantity = i.Quantity,
+                    UnitPrice = i.Product.Price
                 }).ToList()
             };
+            order.TotalPrice = order.Items.Sum(i => i.UnitPrice * i.Quantity);
 
             _context.Orders.Add(order);
 
@@ -58,7 +61,12 @@ namespace AmazonClone.Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(order);
+            return Ok(new
+            {
+                Message = "Checkout successful",
+                OrderId = order.Id,
+                TotalPrice = order.TotalPrice
+            });
         }
     }
 }

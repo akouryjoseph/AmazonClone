@@ -1,7 +1,9 @@
 ﻿using AmazonClone.Api.Data;
 using AmazonClone.Api.Models;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AmazonClone.Api.Controllers
 {
@@ -49,6 +51,7 @@ namespace AmazonClone.Api.Controllers
 
         // POST: api/products
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateProduct(Product product)
         {
             _context.Products.Add(product);
