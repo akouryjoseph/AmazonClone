@@ -8,6 +8,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:4200")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // Add services (DbContext, Controllers, JWT, Swagger) ...
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -84,6 +95,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+
+app.UseCors("AllowFrontend");
+
 // Middleware
 app.UseAuthentication();
 app.UseAuthorization();
@@ -91,6 +105,7 @@ app.UseAuthorization();
 // Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
+
 
 // Map controllers
 app.MapControllers();

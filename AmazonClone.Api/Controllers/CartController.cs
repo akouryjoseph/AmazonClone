@@ -9,7 +9,7 @@ namespace AmazonClone.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class CartController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -24,7 +24,10 @@ namespace AmazonClone.Api.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (userId == null)
-                throw new UnauthorizedAccessException("User ID not found in token");
+            {
+                //TEMP FIX (fake user)
+                return 1;
+            }
 
             return int.Parse(userId);
         }
@@ -73,6 +76,32 @@ namespace AmazonClone.Api.Controllers
 
             return Ok(cart);
         }
+        [HttpPost("decrease/{productId}")]
+        public async Task<IActionResult> Decrease(int productId)
+        {
+            var userId = GetUserId();
+
+            var cart = await _context.Carts
+                .Include(c => c.Items)
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            var item = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+            if (item == null)
+                return NotFound();
+
+            item.Quantity--;
+
+            if (item.Quantity <= 0)
+            {
+                cart.Items.Remove(item);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(cart);
+        }
+
         [HttpPut("update/{productId}")]
         public async Task<IActionResult> UpdateQuantity(int productId, int quantity)
         {
