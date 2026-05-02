@@ -1,0 +1,45 @@
+<!-- CATEGORY FILTER BAR -->
+<div style="margin: 20px; display: flex; gap: 10px;">
+  <button (click)="setCategory('all')">All</button>
+  <button (click)="setCategory('Electronics')">Electronics</button>
+  <button (click)="setCategory('Clothes')">Clothes</button>
+  <button (click)="setCategory('Books')">Books</button>
+  <button (click)="setCategory('Kitchen & Home')">Home</button>
+</div>
+
+<!-- PRODUCTS GRID -->
+<div style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px;">
+
+  <div *ngFor="let product of filteredProducts"
+       style="
+         width: 220px;
+         border: 1px solid #ddd;
+         border-radius: 10px;
+         padding: 10px;
+         background: white;
+         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+       ">
+
+    <img [src]="product.imageUrl"
+         style="width: 100%; height: 160px; object-fit: contain;">
+
+    <h4>{{ product.name }}</h4>
+    <p style="font-size: 12px;">{{ product.description }}</p>
+
+    <p><b>€{{ product.price }}</b></p>
+
+    <button (click)="addToCart(product.id)"
+            style="
+              width: 100%;
+              background: #ffd814;
+              border: none;
+              padding: 8px;
+              border-radius: 5px;
+              cursor: pointer;
+            ">
+      Add to Cart
+    </button>
+
+  </div>
+
+</div>

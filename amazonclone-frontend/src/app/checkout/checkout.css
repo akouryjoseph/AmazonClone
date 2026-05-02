@@ -1,0 +1,32 @@
+.checkout-container {
+  display: flex;
+  gap: 20px;
+}
+
+.checkout-steps {
+  flex: 2;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 10px;
+  background: white;
+}
+
+.checkout-summary {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 10px;
+  background: #f9f9f9;
+  position: sticky;
+  top: 20px;
+}
+
+input {
+  display: block;
+  width: 100%;
+  margin: 8px 0;
+  padding: 8px;
+}
+button {
+  margin-right: 10px;
+}

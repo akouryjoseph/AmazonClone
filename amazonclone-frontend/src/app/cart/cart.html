@@ -1,0 +1,49 @@
+<h2>Your Cart</h2>
+
+<div *ngIf="cart?.items?.length === 0">
+  <p>Your cart is empty</p>
+</div>
+
+<div class="cart-layout" *ngIf="cart?.items?.length > 0">
+
+  <!-- LEFT: ITEMS -->
+  <div class="cart-items">
+
+    <div *ngFor="let item of cart?.items" class="cart-item">
+
+      <img [src]="item.product.imageUrl" class="cart-image">
+
+      <div class="cart-details">
+
+        <h3>{{ item.product.name }}</h3>
+        <p>Price: €{{ item.product.price }}</p>
+
+        <div class="qty">
+          <button (click)="decreaseQuantity(item)">-</button>
+          <span>{{ item.quantity }}</span>
+          <button (click)="increaseQuantity(item)">+</button>
+        </div>
+
+        <button (click)="removeItem(item.product.id)">
+          Remove
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: SUMMARY -->
+  <div class="cart-summary">
+
+    <h3>Order Summary</h3>
+
+    <p>Total items: {{ cart?.items?.length }}</p>
+
+    <h2>Total: €{{ getTotal() }}</h2>
+
+    <button class="checkout-btn" (click)="checkout()">
+      Proceed to Checkout
+    </button>
+
+  </div>
+</div>

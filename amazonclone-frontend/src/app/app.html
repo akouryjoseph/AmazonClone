@@ -1,0 +1,26 @@
+<nav style="
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #131921;
+  color: white;
+  padding: 10px 20px;
+">
+
+<a routerLink="/" 
+   style="color: white; text-decoration: none; font-weight: bold;">
+  AmazonClone
+</a>
+
+  <div style="display: flex; gap: 15px;">
+    <a routerLink="/" style="color: white;">Home</a>
+    <a routerLink="/cart" style="color: white;">Cart</a>
+    <a routerLink="/login" style="color: white;">Login</a>
+  </div>
+
+</nav>
+
+<!-- Page content -->
+<div style="padding: 20px;">
+  <router-outlet></router-outlet>
+</div>

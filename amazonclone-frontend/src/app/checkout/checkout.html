@@ -1,0 +1,89 @@
+<h2>Checkout</h2>
+
+<div class="checkout-container">
+
+  <!-- LEFT SIDE: STEPS -->
+  <div class="checkout-steps">
+
+    <!-- STEP 1 -->
+    <div *ngIf="step === 1 && checkoutData">
+      <h3>1. Shipping Address</h3>
+
+      <input placeholder="Full Name" [(ngModel)]="address.name">
+      <input placeholder="Address" [(ngModel)]="address.line1">
+      <input placeholder="City" [(ngModel)]="address.city">
+      <input placeholder="Postal Code" [(ngModel)]="address.zip">
+
+      <button (click)="goToCart()">Back to Cart</button>
+      <button (click)="nextStep()">Continue</button>
+    </div>
+
+    <!-- STEP 2 -->
+    <div *ngIf="step === 2">
+      <h3>2. Delivery Method</h3>
+
+      <label>
+        <input type="radio" [(ngModel)]="delivery" value="standard">
+        Standard (3-5 days)
+      </label>
+
+      <label>
+        <input type="radio" [(ngModel)]="delivery" value="fast">
+        Fast (1-2 days)
+      </label>
+    <br>
+    <br>
+      <button (click)="prevStep()">Back</button>
+      <button (click)="nextStep()">Continue</button>
+    </div>
+
+    <!-- STEP 3 -->
+    <div *ngIf="step === 3">
+      <h3>3. Payment</h3>
+
+      <input placeholder="Card Holder Name" [(ngModel)]="payment.name">
+      <input placeholder="Card Number" [(ngModel)]="payment.number">
+      <input placeholder="Expiry Date" [(ngModel)]="payment.expiry">
+      <input placeholder="CVV" [(ngModel)]="payment.cvv">
+
+      <button (click)="prevStep()">Back</button>
+      <button (click)="nextStep()">Continue</button>
+    </div>
+
+    <!-- STEP 4 -->
+    <div *ngIf="step === 4">
+      <h3>4. Review Order</h3>
+
+      <p><b>Name:</b> {{ address.name }}</p>
+      <p><b>Address:</b> {{ address.line1 }}</p>
+      <p><b>Delivery:</b> {{ delivery }}</p>
+
+      <h3>Total: €{{ checkoutData?.total }}</h3>
+
+      <button (click)="prevStep()">Back</button>
+      <button (click)="placeOrder()">Place Order</button>
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDE: ORDER SUMMARY -->
+  <div class="checkout-summary">
+
+    <h3>Order Summary</h3>
+
+    <!-- ITEMS -->
+    <div *ngFor="let item of checkoutData?.items" style="margin-bottom: 10px;">
+      <p>
+        {{ item.product.name }} × {{ item.quantity }}
+      </p>
+      <small>€{{ item.product.price * item.quantity }}</small>
+    </div>
+
+    <hr>
+
+    <!-- TOTAL -->
+    <h2>Total: €{{ checkoutData?.total }}</h2>
+
+  </div>
+
+</div>
